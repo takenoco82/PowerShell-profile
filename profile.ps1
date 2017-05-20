@@ -6,13 +6,13 @@
 # Global Variables {{{
 
 # 履歴ファイル
-$global:PS_HISTORY_FILE = Join-Path -Path (Split-Path -Path $PROFILE) -ChildPath "PS_History.xml"
+$global:UserPSHistoryFile = Join-Path -Path (Split-Path -Path $PROFILE) -ChildPath "PS_History.xml"
 # 保存するヒストリの件数
-$global:PS_HISTORY_SIZE = 1000
+$global:UserPSHistorySize = 1000
 # history系のコマンドを除外する
-$global:PS_INCLUDE_HISTORY_COMMAND = $false
+$global:UserPSIncludeHistoryCommand = $false
 # 重複したコマンドを除外する
-$global:PS_INCLUDE_DUPLICATE_COMMAND = $false
+$global:UserPSIncludeDuplicateCommand = $false
 
 #}}}
 
@@ -27,14 +27,14 @@ function Reload-Profile { #{{{
 # https://stuncloud.wordpress.com/2014/12/05/powershell_save_and_load_command_history/
 function Save-History { #{{{
     param(
-        [switch]$IncludeHistoryCommand = $global:PS_INCLUDE_HISTORY_COMMAND
-        ,[switch]$IncludeDuplicateCommand = $global:PS_INCLUDE_DUPLICATE_COMMAND
+        [switch]$IncludeHistoryCommand = $global:UserPSIncludeHistoryCommand
+        ,[switch]$IncludeDuplicateCommand = $global:UserPSIncludeDuplicateCommand
     )
 
     # 履歴ファイルに保存されているヒストリ
     $SavedHistories = @()
-    if (Test-Path -Path $global:PS_HISTORY_FILE) {
-        $SavedHistories = Import-Clixml -Path $global:PS_HISTORY_FILE
+    if (Test-Path -Path $global:UserPSHistoryFile) {
+        $SavedHistories = Import-Clixml -Path $global:UserPSHistoryFile
 
         # 履歴ファイルがあってもヒストリがないと $null になる
         if ($null -eq $SavedHistories) {
@@ -59,13 +59,13 @@ function Save-History { #{{{
     }
 
     # 履歴ファイルに保存する
-    $TargetHistories | Sort-Object StartExecutionTime | Select-Object -Last $global:PS_HISTORY_SIZE | Export-Clixml -Path $global:PS_HISTORY_FILE
+    $TargetHistories | Sort-Object StartExecutionTime | Select-Object -Last $global:UserPSHistorySize | Export-Clixml -Path $global:UserPSHistoryFile
 } #}}}
 
 # http://bakemoji.hatenablog.jp/entry/2014/07/22/214230
 function Restore-History { #{{{
     param(
-        [string]$HistoryFile = $global:PS_HISTORY_FILE
+        [string]$HistoryFile = $global:UserPSHistoryFile
         ,[switch]$Force
     )
 
@@ -105,8 +105,8 @@ function Search-History { #{{{
     param (
         [string[]]$Keywords
         ,[int64[]]$Id
-        ,[switch]$IncludeHistoryCommand = $global:PS_INCLUDE_HISTORY_COMMAND
-        ,[switch]$IncludeDuplicateCommand = $global:PS_INCLUDE_DUPLICATE_COMMAND
+        ,[switch]$IncludeHistoryCommand = $global:UserPSIncludeHistoryCommand
+        ,[switch]$IncludeDuplicateCommand = $global:UserPSIncludeDuplicateCommand
         ,[switch]$AscendingId
     )
 
